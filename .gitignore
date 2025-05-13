@@ -1,0 +1,18 @@
+# Environnement virtuel Python
+.venv/
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+
+# Données et exports
+data/
+exports/
+
+# Rapport Flake8 HTML
+flake8_report/
+
+# Fichiers IDEs et OS
+.vscode/
+.DS_Store
+*.swp

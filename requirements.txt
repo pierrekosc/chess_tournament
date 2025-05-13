@@ -1,0 +1,2 @@
+python-dateutil  
+flake8-html>=0.4.3,<0.5.0
