@@ -20,53 +20,33 @@ Elle permet de **créer, gérer et suivre des tournois d’échecs** de manière
 
 Le projet suit une architecture en **Modèle–Vue–Contrôleur** :
 
-```mermaid
-flowchart LR
-  subgraph Models
+
+  **Models**
     M1[player_model.py]
     M2[tournament_model.py]
     M3[round_model.py]
     M4[match_model.py]
-  end
 
-  subgraph Services
+
+  **Services**
     S1[json_service.py]
     S2[player_storage_service.py]
     S3[tournament_storage_service.py]
     S4[pairing_service.py]
-  end
 
-  subgraph Controllers
-    C1[menu.py]
+
+  **Controllers**
+    C1[menu_controller.py]
     C2[player_controller.py]
     C3[tournament_controller.py]
     C4[match_controller.py]
-  end
 
-  subgraph Views
+
+  **Views**
     V1[menu_view.py]
     V2[player_view.py]
     V3[tournament_view.py]
     V4[match_view.py]
-  end
-
-  MAIN[main.py] --> C1
-  C1 --> C2 & C3 & C4
-
-  %% Flux MVC
-  C2 --> S2
-  C3 --> S3
-  C4 --> S4
-  S2 --> M1
-  S3 --> M2
-  S4 --> M1 & M2 & M3 & M4
-  S2 --> S1
-  S3 --> S1
-  C1 --> V1
-  C2 --> V2
-  C3 --> V3
-  C4 --> V4
-```
 
 ### Structure du projet
 ```
