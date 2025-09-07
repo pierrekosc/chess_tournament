@@ -1,2 +1,2 @@
-python-dateutil  
-flake8-html>=0.4.3,<0.5.0
+# Projet Chess Tournament
+# Aucune dépendance externe requise (lib standard Python uniquement).

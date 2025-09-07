@@ -1,76 +1,56 @@
-import logging
-from typing import Optional
 from models.player_model import Player
 
-logger = logging.getLogger(__name__)
-
-
 class Match:
-    """Représente un match entre deux joueurs avec leurs scores."""
+    """
+    Représente un match entre deux joueurs avec leurs scores.
+    """
 
-    def __init__(
-        self,
-        player1: Player,
-        player2: Player,
-        score1: float = 0.0,
-        score2: float = 0.0
-    ):
-        # Initialise les joueurs et leurs scores
+    def __init__(self, player1: Player, player2: Player, score1: int = 0, score2: int = 0):
         self.player1 = player1
         self.player2 = player2
         self.score1 = score1
         self.score2 = score2
-        logger.debug(
-            "Match créé : %s vs %s – scores initiaux : %s, %s",
-            player1.full_name(),
-            player2.full_name(),
-            score1,
-            score2
-        )
 
-    def set_scores(self, score1: float, score2: float) -> None:
-        """Met à jour les scores des deux joueurs."""
+    def update_scores(self, score1: int, score2: int):
+        """Met à jour les scores du match."""
         self.score1 = score1
         self.score2 = score2
-        logger.debug(
-            "Mise à jour des scores : %s = %s, %s = %s",
-            self.player1.full_name(),
-            score1,
-            self.player2.full_name(),
-            score2
-        )
-
-    def get_winner(self) -> Optional[Player]:
-        """Retourne le joueur gagnant ou None s'il y a égalité."""
-        if self.score1 > self.score2:
-            logger.debug("Gagnant : %s", self.player1.full_name())
-            return self.player1
-        elif self.score2 > self.score1:
-            logger.debug("Gagnant : %s", self.player2.full_name())
-            return self.player2
-        logger.debug("Match nul entre %s et %s",
-                     self.player1.full_name(),
-                     self.player2.full_name())
-        return None
 
     def get_result_summary(self) -> str:
-        """Retourne une chaîne résumée du résultat du match."""
+        """Retourne un résumé du match sous forme de texte."""
+        return f"{self.player1.full_name()} ({self.score1}) - ({self.score2}) {self.player2.full_name()}"
+
+    def to_list(self) -> list:
+        """Sérialise le match en liste pour JSON."""
+        return [
+            self.player1.national_id,
+            self.player2.national_id,
+            self.score1,
+            self.score2
+        ]
+
+    @classmethod
+    def from_list(cls, data: list, player_resolver: callable):
+        """
+        Reconstruit un match à partir d'une liste [id1, id2, score1, score2].
+        :param data: Liste représentant le match.
+        :param player_resolver: Fonction pour récupérer un objet Player à partir de son id.
+        """
+        p1 = player_resolver(data[0])
+        p2 = player_resolver(data[1])
+        score1 = data[2]
+        score2 = data[3]
+        return cls(p1, p2, score1, score2)
+    
+    def get_winner(self):
+        """Retourne le Player gagnant, ou None en cas d'égalité."""
+        if self.score1 > self.score2:
+            return self.player1
+        if self.score2 > self.score1:
+            return self.player2
+        return None
+
+    def get_winner_text(self) -> str:
+        """Texte lisible : nom du gagnant ou 'Égalité'."""
         winner = self.get_winner()
-        winner_name = winner.full_name() if winner else "Égalité"
-        summary = (
-            f"{self.player1.full_name()} ({self.score1}) vs "
-            f"{self.player2.full_name()} ({self.score2}) ➔ {winner_name}"
-        )
-        logger.debug("Résumé du match : %s", summary)
-        return summary
-
-    def to_tuple(self) -> tuple[list, list]:
-        """Retourne le match sous forme de tuples sérialisables [id, score]."""
-        return (
-            [self.player1.national_id, self.score1],
-            [self.player2.national_id, self.score2]
-        )
-
-    def __str__(self) -> str:
-        """Représentation textuelle du match."""
-        return self.get_result_summary()
+        return winner.full_name() if winner else "Égalité"

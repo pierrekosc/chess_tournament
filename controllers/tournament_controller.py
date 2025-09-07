@@ -1,52 +1,41 @@
 from models.tournament_model import Tournament
-from controllers.player_controller import PlayerController
+from models.player_model import Player
 from services.tournament_storage_service import TournamentStorageService
-from services.json_service import JSONService
-
 
 class TournamentController:
     """Contrôleur responsable de la logique du tournoi."""
 
     @staticmethod
-    def create_tournament(name, location, description):
-        """Crée un tournoi (sans joueurs) et le persiste immédiatement."""
+    def create_tournament(name: str, location: str, description: str) -> Tournament:
         tournament = Tournament(name=name, location=location, description=description)
-        # Sauvegarde initiale du tournoi (état sans joueurs)
         TournamentStorageService.save_tournament(tournament)
         return tournament
 
     @staticmethod
-    def add_player(tournament, first_name, last_name, birthdate, national_id):
-        """
-        Crée un joueur, l'ajoute au tournoi, et persiste l'état.
-        Renvoie l'objet Player créé.
-        """
-        # Création du joueur dans la base globale
-        player = PlayerController().create_player(first_name, last_name, birthdate, national_id)
-        # Ajout au tournoi
+    def add_player(tournament: Tournament, player: Player) -> Player:
+        """Ajoute un joueur déjà construit au tournoi et persiste l'état."""
         tournament.add_player(player)
-        # Persistance du tournoi mis à jour
         TournamentStorageService.save_tournament(tournament)
         return player
 
     @staticmethod
-    def play_all_rounds(tournament):
+    def add_multiple_players(tournament: Tournament, players: list[Player]) -> int:
+        """Ajoute une liste de joueurs déjà construits au tournoi et persiste.
+        Ne fait AUCUNE interaction IHM (pas de print/input).
         """
-        Lance tous les rounds automatiquement jusqu'à ce que le tournoi soit fini,
-        puis persiste le rapport et la version finale du tournoi.
-        """
-        from controllers.match_controller import MatchController  # pour éviter la circularité
+        for p in players:
+            TournamentController.add_player(tournament, p)
+        return len(players)
 
-        # Génère et joue tous les rounds
+    @staticmethod
+    def play_all_rounds(tournament: Tournament) -> None:
+        from controllers.match_controller import MatchController
         MatchController.play_all_rounds(tournament)
-
-        # Fixe la date de fin du tournoi
         tournament.end_tournament()
-
-        # Met à jour le nombre réel de rounds joués
-        tournament.number_of_rounds = len(tournament.rounds)
-
-        # Sauvegarde du rapport JSON séparé
-        JSONService.save_report(tournament)
-        # Sauvegarde finale du tournoi
+        tournament.num_rounds = len(tournament.rounds)
         TournamentStorageService.save_tournament(tournament)
+
+    @staticmethod
+    def get_tournament_report(tournament: Tournament):
+        players_sorted = sorted(tournament.players, key=lambda p: p.full_name())
+        return players_sorted, tournament.rounds

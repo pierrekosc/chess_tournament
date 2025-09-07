@@ -1,16 +1,5 @@
-"""
-models/round_model.py
-
-Ce module contient la classe Round qui représente un tour (round) dans un tournoi.
-Elle gère l'heure de début, l'heure de fin, et les matchs associés.
-"""
-
-
 from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
-
+from models.match_model import Match
 
 class Round:
     """
@@ -24,29 +13,14 @@ class Round:
         self.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.end_time = None
         self.matches = []  # Liste de Match
-        logger.debug(
-            "Round initialisé : %s - Début à %s",
-            self.name,
-            self.start_time
-        )
 
     def end_round(self) -> None:
         """Enregistre l'heure de fin du round."""
         self.end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.debug(
-            "Round terminé : %s - Fin à %s",
-            self.name,
-            self.end_time
-        )
 
     def add_match(self, match) -> None:
         """Ajoute un match à la liste des matchs du round."""
         self.matches.append(match)
-        logger.debug(
-            "Match ajouté à %s : %s",
-            self.name,
-            match
-        )
 
     def __str__(self) -> str:
         """Retourne une description textuelle du round."""
@@ -63,5 +37,36 @@ class Round:
             'name': self.name,
             'start_time': self.start_time,
             'end_time': self.end_time,
-            'matches': [m.to_tuple() for m in self.matches]
+            'matches': [m.to_list() for m in self.matches]
         }
+        
+    @classmethod
+    def from_dict(cls, data: dict, player_resolver: callable):
+        """
+        Reconstruit une instance de Round à partir d'un dictionnaire.
+        :param data: Dictionnaire représentant le round.
+        :param player_resolver: Fonction pour résoudre les joueurs à partir de leur identifiant.
+        :return: Instance de Round.
+        """
+        round_instance = cls(data['name'])
+        round_instance.start_time = data.get('start_time')
+        round_instance.end_time = data.get('end_time')
+        matches = []
+        for match_data in data.get("matches", []):
+            match_obj = Match.from_list(match_data, player_resolver)
+            matches.append(match_obj)
+        round_instance.matches = matches
+        return round_instance
+
+    @classmethod
+    def create_from_pairs(cls, round_number: int, pairs: list, already_played: set, play_match_callable: callable):
+        if not pairs:
+            return None
+        round_instance = cls(f"Round {round_number}")
+        for player1, player2 in pairs:
+            match = play_match_callable(player1, player2)
+            round_instance.add_match(match)
+            key = tuple(sorted([player1.national_id, player2.national_id]))
+            already_played.add(key)
+            round_instance.end_round()
+        return round_instance

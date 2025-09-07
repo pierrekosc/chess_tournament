@@ -1,5 +1,6 @@
 # Environnement virtuel Python
 .venv/
+venv/
 
 # Fichiers Python compilés
 __pycache__/
@@ -9,7 +10,7 @@ __pycache__/
 data/
 exports/
 
-# Rapport Flake8 HTML
+# Rapports Flake8
 flake8_report/
 
 # Fichiers IDEs et OS

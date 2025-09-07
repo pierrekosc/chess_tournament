@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import date, datetime as _datetime
+from config import EXPORTS_DIR, DATA_DIR
 
 
 class JSONService:
@@ -42,13 +43,12 @@ class JSONService:
             json.dump(data, file, indent=4, ensure_ascii=False, default=_default)
 
     @staticmethod
-    def save_report(tournament):
-        """Génère et sauvegarde un rapport JSON complet du tournoi."""
-        from datetime import datetime
-
-        os.makedirs("exports", exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"exports/tournament_report_{timestamp}.json"
+    def save_report(tournament) -> str:
+        """Génère et sauvegarde un rapport JSON complet du tournoi, et renvoie le chemin du fichier créé."""
+        # Pas d'import local, on utilise _datetime déjà importé en haut
+        os.makedirs(EXPORTS_DIR, exist_ok=True)
+        timestamp = _datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = str(EXPORTS_DIR / f"tournament_report_{timestamp}.json")
 
         # On convertit explicitement les dates en chaînes pour le rapport
         report = {
@@ -78,7 +78,7 @@ class JSONService:
                             "score1": m.score1,
                             "player2": m.player2.full_name(),
                             "score2": m.score2,
-                            "winner": m.get_winner().full_name() if m.get_winner() else "Égalité"
+                            "winner": m.get_winner_text()
                         }
                         for m in r.matches
                     ]
@@ -89,4 +89,8 @@ class JSONService:
 
         # Sauvegarde du rapport en utilisant le même mécanisme de sérialisation
         JSONService.save(filename, report)
-        print(f"[✅] Rapport sauvegardé dans : {filename}")
+        return filename
+
+def ensure_storage_ready() -> None:
+    """Crée les dossiers nécessaires à la persistance si absents."""
+    os.makedirs(EXPORTS_DIR, exist_ok=True)

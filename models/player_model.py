@@ -1,30 +1,31 @@
-import logging
-from datetime import datetime
-
-logger = logging.getLogger(__name__)
-
+from datetime import datetime, date
 
 class Player:
-    """Représente un joueur avec ses informations personnelles et son score."""
-
-    def __init__(
-        self,
-        first_name: str,
-        last_name: str,
-        national_id: str,
-        birthdate: str
-    ):
+    def __init__(self, first_name: str, last_name: str, birthdate: str, national_id: str):
         self.first_name = first_name
         self.last_name = last_name
-        self.national_id = national_id  # Identifiant unique, ex. 'AB12345'
-        # stocke la date sous forme de datetime.date pour usage interne
+        # Ici on parse une seule fois du ISO vers un objet date
         self.birthdate = datetime.strptime(birthdate, "%Y-%m-%d").date()
-        self.score = 0.0  # Score initial du joueur
-        logger.debug(
-            "Joueur créé : %s (%s)",
-            self.full_name(),
-            self.national_id
+        self.national_id = national_id
+        self.score = 0.0
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Player":
+        return cls(
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            birthdate=data["birthdate"],
+            national_id=data["national_id"]
         )
+
+    def to_dict(self) -> dict:
+        return {
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "birthdate": self.birthdate.isoformat(),
+            "national_id": self.national_id,
+            "score": self.score,
+        }
 
     def full_name(self) -> str:
         """Retourne le nom complet du joueur."""
@@ -40,8 +41,5 @@ class Player:
     def update_score(self, points: float) -> None:
         """Met à jour le score du joueur avec les points donnés."""
         self.score += points
-        logger.debug(
-            "Mise à jour du score pour %s : +%s",
-            self.full_name(),
-            points
-        )
+        
+   
