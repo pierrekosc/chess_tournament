@@ -41,15 +41,7 @@ class MatchController:
 
     @staticmethod
     def _create_round(round_number: int, players: list, already_played: set):
-        """Construit un round à partir des paires de joueurs actuellement disponibles.
-        Responsabilités:
-        - Interroger le service d'appariement (`available_pairs`) pour obtenir
-          les paires non encore jouées.
-        - S'il n'existe plus de paire valide, signaler la fin des rounds en
-          renvoyant `None`.
-        - Sinon, déléguer la création du `Round` au modèle `Round` et fournir
-          le callback `_play_match` qui s'occupera de la saisie des scores
-          (via la vue) et de la mise à jour des joueurs."""
+        """Construit un round à partir des paires de joueurs actuellement disponibles."""
         pairs = available_pairs(players, already_played)
         if not pairs:
             return None
