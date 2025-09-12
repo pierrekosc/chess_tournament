@@ -1,10 +1,10 @@
+# models/match_model.py
+"""Modèle de données pour un match entre deux joueurs (couche Model, MVC)."""
+
 from models.player_model import Player
 
 class Match:
-    """
-    Représente un match entre deux joueurs avec leurs scores.
-    """
-
+    """Représente un match entre deux joueurs avec leurs scores."""
     def __init__(self, player1: Player, player2: Player, score1: int = 0, score2: int = 0):
         self.player1 = player1
         self.player2 = player2
@@ -31,11 +31,7 @@ class Match:
 
     @classmethod
     def from_list(cls, data: list, player_resolver: callable):
-        """
-        Reconstruit un match à partir d'une liste [id1, id2, score1, score2].
-        :param data: Liste représentant le match.
-        :param player_resolver: Fonction pour récupérer un objet Player à partir de son id.
-        """
+        """ Reconstruit un match à partir d'une liste [id1, id2, score1, score2]."""
         p1 = player_resolver(data[0])
         p2 = player_resolver(data[1])
         score1 = data[2]

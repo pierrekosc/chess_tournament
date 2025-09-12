@@ -1,6 +1,9 @@
+"""Modèle de données pour un joueur (couche Model, MVC)."""
+
 from datetime import datetime, date
 
 class Player:
+    """Représente un joueur avec ses informations et son score."""
     def __init__(self, first_name: str, last_name: str, birthdate: str, national_id: str):
         self.first_name = first_name
         self.last_name = last_name
@@ -11,6 +14,7 @@ class Player:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Player":
+        """Crée une instance de Player à partir d'un dictionnaire."""
         return cls(
             first_name=data["first_name"],
             last_name=data["last_name"],
@@ -19,6 +23,7 @@ class Player:
         )
 
     def to_dict(self) -> dict:
+        """Sérialise le joueur en dictionnaire pour JSON."""
         return {
             "first_name": self.first_name,
             "last_name": self.last_name,

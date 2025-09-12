@@ -2,6 +2,7 @@
 from datetime import date
 
 class Tournament:
+    """Représente un tournoi d'échecs avec plusieurs rounds et joueurs."""
     def __init__(
         self,
         name: str,
@@ -32,7 +33,7 @@ class Tournament:
         else:
             self.end_date = end_date  # None ou date
 
-        # Paramètres & état
+        # Paramètres et état
         self.num_rounds = num_rounds
         self.current_round = current_round
         self.players = players if players is not None else []   # en mémoire : objets Player

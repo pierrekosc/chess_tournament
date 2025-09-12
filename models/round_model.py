@@ -2,10 +2,8 @@ from datetime import datetime
 from models.match_model import Match
 
 class Round:
-    """
-    Classe modèle pour représenter un round dans un tournoi.
-    Chaque round contient un nom, des horodatages et une liste de matchs.
-    """
+    """Classe modèle pour représenter un round dans un tournoi.
+    Chaque round contient un nom, des horodatages et une liste de matchs."""
 
     def __init__(self, name: str):
         """Initialise un round avec un nom et une date de début."""
@@ -42,12 +40,7 @@ class Round:
         
     @classmethod
     def from_dict(cls, data: dict, player_resolver: callable):
-        """
-        Reconstruit une instance de Round à partir d'un dictionnaire.
-        :param data: Dictionnaire représentant le round.
-        :param player_resolver: Fonction pour résoudre les joueurs à partir de leur identifiant.
-        :return: Instance de Round.
-        """
+        """Reconstruit une instance de Round à partir d'un dictionnaire."""
         round_instance = cls(data['name'])
         round_instance.start_time = data.get('start_time')
         round_instance.end_time = data.get('end_time')
@@ -60,6 +53,7 @@ class Round:
 
     @classmethod
     def create_from_pairs(cls, round_number: int, pairs: list, already_played: set, play_match_callable: callable):
+        """Crée un round à partir de paires de joueurs et d'une fonction de jeu de match."""
         if not pairs:
             return None
         round_instance = cls(f"Round {round_number}")
