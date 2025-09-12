@@ -3,6 +3,7 @@ from services.json_service import ensure_storage_ready
 
 
 def main():
+    """Point d'entrée principal de l'application."""
     try:
         ensure_storage_ready()
     except Exception as exc:
