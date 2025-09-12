@@ -6,7 +6,6 @@ from config import EXPORTS_DIR, DATA_DIR
 
 class JSONService:
     """Service utilitaire pour lire et écrire des fichiers JSON."""
-
     @staticmethod
     def load(file_path):
         """Charge les données depuis un fichier JSON, retourne une liste vide si le fichier est vide ou manquant."""

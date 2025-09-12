@@ -2,10 +2,12 @@ from typing import List, Set, Tuple
 from models.player_model import Player
 
 def _pair_key(p1: Player, p2: Player) -> Tuple[str, str]:
+    """Retourne une clé unique pour une paire de joueurs, indépendamment de l'ordre."""
     return tuple(sorted([p1.national_id, p2.national_id]))
 
 def available_pairs(players: List[Player],
                     already_played: Set[Tuple[str, str]]) -> List[Tuple[Player, Player]]:
+    """Génère toutes les paires possibles de joueurs n'ayant pas encore joué ensemble."""
     pairs: List[Tuple[Player, Player]] = []
     for i in range(len(players)):
         for j in range(i + 1, len(players)):

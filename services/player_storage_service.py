@@ -11,6 +11,7 @@ class PlayerStorageService:
     FILE_PATH = str(DATA_DIR / "players.json")
 
     def save_player(self, player: Player) -> bool:
+        """Sauvegarde un joueur dans le fichier JSON."""
         players = self.load_all()
         exists = any(
             p.first_name == player.first_name and p.last_name == player.last_name
