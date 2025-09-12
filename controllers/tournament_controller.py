@@ -7,6 +7,7 @@ class TournamentController:
 
     @staticmethod
     def create_tournament(name: str, location: str, description: str) -> Tournament:
+        """Créer un tournoi et le sauvegarde via le service de stockage."""
         tournament = Tournament(name=name, location=location, description=description)
         TournamentStorageService.save_tournament(tournament)
         return tournament
@@ -21,7 +22,7 @@ class TournamentController:
     @staticmethod
     def add_multiple_players(tournament: Tournament, players: list[Player]) -> int:
         """Ajoute une liste de joueurs déjà construits au tournoi et persiste.
-        Ne fait AUCUNE interaction IHM (pas de print/input).
+        Ne fait aucune interaction IHM (pas de print/input).
         """
         for p in players:
             TournamentController.add_player(tournament, p)
@@ -29,6 +30,7 @@ class TournamentController:
 
     @staticmethod
     def play_all_rounds(tournament: Tournament) -> None:
+        """Joue tous les rounds du tournoi, met à jour l'état et persiste."""
         from controllers.match_controller import MatchController
         MatchController.play_all_rounds(tournament)
         tournament.end_tournament()
@@ -37,5 +39,6 @@ class TournamentController:
 
     @staticmethod
     def get_tournament_report(tournament: Tournament):
+        """Retourne les joueurs triés et les rounds du tournoi."""
         players_sorted = sorted(tournament.players, key=lambda p: p.full_name())
         return players_sorted, tournament.rounds

@@ -1,3 +1,11 @@
+"""
+Controller du menu principal (MVC strict).
+
+Responsabilités :
+- Orchestrer la navigation (boucle de menu) et appeler les services.
+- Récupérer/valider les choix utilisateur via la vue, transmettre les données aux vues spécialisées.
+- Ne réalise AUCUNE I/O directe (pas de input/print) : tout passe par les vues.
+"""
 from views.tournament_view import TournamentView
 from views.player_view import PlayerView
 from controllers.tournament_controller import TournamentController
@@ -6,34 +14,16 @@ from services.player_storage_service import PlayerStorageService
 from controllers.player_controller import PlayerController
 from views.menu_view import MenuView
 
-"""
-Controller du menu principal (MVC strict).
 
-Responsabilités :
-- Orchestrer la navigation (boucle de menu) et appeler les services.
-- Récupérer/valider les choix utilisateur via la vue, transmettre les données aux vues spécialisées.
-- Ne réalise AUCUNE I/O directe (pas de input/print) : tout passe par les vues.
-Dépendances :
-- views.menu_view.MenuView
-- views.tournament_view.TournamentView
-- views.player_view.PlayerView
-- controllers.tournament_controller.TournamentController
-- controllers.player_controller.PlayerController
-- services.tournament_storage_service.TournamentStorageService
-- services.player_storage_service.PlayerStorageService
-"""
 
 class MenuController:
     def __init__(self):
         """
         Initialise le contrôleur de menu.
-
         Effets :
             - Crée une instance de vue de menu.
             - Initialise la collection de tournois chargés en mémoire.
-        """
-        
-        
+        """   
         self.tournaments = []
         self.view = MenuView()
 
@@ -49,7 +39,7 @@ class MenuController:
 
 
     def run(self):
-    # Boucle principale dans le Controller (MVC strict)
+        """Boucle principale dans le Controller (MVC strict)."""
         while True:
             self.view.render_menu()
             choice = self.view.ask_choice()
@@ -75,7 +65,7 @@ class MenuController:
                 self.view.notify("Choix invalide.")
 
     def create_tournament(self):
-        # Crée un nouveau tournoi et y ajoute des joueurs.
+        """Crée un nouveau tournoi et y ajoute des joueurs."""
         name, location, description = TournamentView.ask_tournament_info()
         tournament = TournamentController.create_tournament(name, location, description)
         count = TournamentView.ask_number_of_players()
@@ -92,7 +82,7 @@ class MenuController:
 
 
     def add_players_to_tournament(self):
-        # Ajoute des joueurs à un tournoi existant.
+        """Ajoute des joueurs à un tournoi existant."""
         tournoi = self._select_tournament("Choisissez un tournoi : ")
         if not tournoi:
             return
@@ -105,7 +95,7 @@ class MenuController:
             TournamentController.add_player(tournoi, player)
 
     def run_rounds_for_tournament(self):
-        # Joue tous les rounds d'un tournoi puis génère un rapport.
+        """Joue tous les rounds d'un tournoi puis génère un rapport."""
         tournoi = self._select_tournament("Choisissez un tournoi à jouer : ")
         if not tournoi:
             return
@@ -116,13 +106,14 @@ class MenuController:
         self.view.notify(f"Rapport sauvegardé : {report_path}")
 
     def list_tournaments(self):
-        # Affiche la liste des tournois chargés en mémoire.
+        """Affiche la liste des tournois chargés en mémoire."""
         if not self.tournaments:
             self.view.notify("Aucun tournoi disponible.")
         else:
             self.view.show_tournaments_list(self.tournaments)
 
     def list_players(self):
+        """Affiche la liste de tous les joueurs connus (stockage)."""
         players = PlayerStorageService.load_all()
         if not players:
             self.view.show_no_players()
@@ -130,6 +121,7 @@ class MenuController:
             self.view.show_players_list(players)
 
     def display_tournament_report(self):
+        """Affiche le rapport d'un tournoi."""
         tournoi = self._select_tournament("Choisissez un tournoi à afficher : ")
         if not tournoi:
             return
@@ -139,7 +131,7 @@ class MenuController:
         self.view.notify(f"Rapport sauvegardé : {report_path}")
 
     def charger_tournoi_depuis_json(self):
-        # Affiche la liste de tous les tournois connus (stockage).
+        """Affiche la liste de tous les tournois connus (stockage)."""
         items = TournamentStorageService.load_all()
         if not items:
             self.view.notify("Aucun tournoi à charger depuis JSON.")
